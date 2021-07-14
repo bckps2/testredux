@@ -2,56 +2,41 @@ import { connect } from 'react-redux';
 import { selectBasket } from '../store/redux1/reducerTest';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import {incrementCounter, decrementCounter, saveOnLocalStorage, getFromLocalStorage, getTotal} from './logicProducts';
+import { getFromLocalStorage } from './logicProducts';
 
 const Cart = ({ reducerCart }) => {
 
   const dispatch = useDispatch();
-  var productsBasket = reducerCart.products;
   var basketStorage = getFromLocalStorage();
-  
-  if(basketStorage?.quantityBasket > 0 && reducerCart.quantity === 0)
-  {
-    reducerCart.products = basketStorage.products;
-    reducerCart.quantity = basketStorage.quantityBasket;
-    reducerCart.totalBasket = getTotal(reducerCart.products);
-    dispatch({ type: 'UPDATE_BASKET', payload: { quantity:reducerCart.quantity, product: reducerCart.products, totalBasket:reducerCart.totalBasket } });
+
+  if (basketStorage?.quantityBasket > 0 && reducerCart.quantity === 0) {
+    dispatch({ type: 'ADD_ITEMS', payload: { products: basketStorage.products } });
   }
-  
+
   const increment = (product) => {
-    incrementCounter(product, productsBasket, reducerCart);
-    reducerCart.totalBasket = getTotal(reducerCart.products);
-    dispatch({ type: 'UPDATE_BASKET', payload: { quantity:reducerCart.quantity, product: reducerCart.products, totalBasket:reducerCart.totalBasket} });
+    dispatch({ type: 'ADD_ITEM', payload: { product: product } });
   }
 
   const decrement = (product) => {
-    reducerCart.products = decrementCounter(product, productsBasket, reducerCart);
-    reducerCart.totalBasket = getTotal(reducerCart.products);
-    dispatch({ type: 'UPDATE_BASKET', payload: { quantity:reducerCart.quantity, product: reducerCart.products ,totalBasket:reducerCart.totalBasket} });
+    dispatch({ type: 'REMOVE_ITEM', payload: { product: product } });
   }
-
-
-  saveOnLocalStorage(reducerCart);
 
   return (
     <div>
-      <span>
-        /****************** CARRITO*/
-      </span>
-      {reducerCart.products?.map((product) =>
-        <span>
+      <h1>Carrito</h1>
+      {reducerCart.products?.map((product, index) =>
+        <span key={index}>
           <p>{product.name}</p>
           <p>{product.price}</p>
           <p>{product.quantityProduct}</p>
           <p>{product.totalPriceProduct}</p>
-       
+
           <button onClick={() => increment(product)}>+</button>
           <button onClick={() => decrement(product)}>-</button>
         </span>
       )}
       <p>Cantidad Total de productos: {reducerCart?.quantity}</p>
       <p>Precio Total : {reducerCart.totalBasket}</p>
-      /****************** FIN CARRITO*/
     </div>
   )
 }

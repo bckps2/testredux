@@ -1,74 +1,75 @@
 
-export function getTotal(productsBasket){
-    
-    let price = 0;
-    for(var product in productsBasket)
-    {
-        price += productsBasket[product].totalPriceProduct; 
-    }
+export function getTotalPriceProducts(productsBasket) {
 
-    return price;
+  let price = 0;
+  for (var product in productsBasket) {
+    price += productsBasket[product].totalPriceProduct;
+  }
+  return price;
 }
 
-
-
-export function saveOnLocalStorage (reducerCart){
-  var basket = 
-  {
-    quantityBasket : reducerCart.quantity,
-    products : reducerCart.products
+export function getTotalProducts(products) {
+  let value = 0;
+  for (var product in products) {
+    value += products[product].quantityProduct;
   }
+  return value;
+}
 
+export function saveOnLocalStorage(productsBasket, quantity) {
+  var basket =
+  {
+    quantityBasket: quantity,
+    products: productsBasket
+  }
+  
   localStorage.setItem("basket", JSON.stringify(basket));
 }
 
-export function getFromLocalStorage (){
+export function getFromLocalStorage() {
   var basketStorage = localStorage.getItem("basket");
-
-  if(basketStorage)
-  {
+  if (basketStorage) {
     basketStorage = JSON.parse(basketStorage);
-
   }
 
   return basketStorage;
 }
 
-export function incrementCounter(product, productsBasket, reducerCart) {
+export function incrementCounter(product, productsBasket, quantity) {
 
-    let numberIndex = productsBasket.findIndex(prod => prod.id === product.id);
+  let numberIndex = productsBasket.findIndex(prod => prod.id === product.id);
 
-    if (productsBasket.length === 0 || numberIndex < 0) {
-        productsBasket.push(product);
-    }
+  if (productsBasket.length === 0 || numberIndex < 0) {
+    productsBasket.push(product);
+  }
 
-    product.quantityProduct += 1;
-    numberIndex = productsBasket.findIndex(prod => prod.id === product.id);
-    productsBasket[numberIndex].quantityProduct = product.quantityProduct;
-    productsBasket[numberIndex].totalPriceProduct = product.quantityProduct * product.price;
-    reducerCart.quantity += 1;
-    saveOnLocalStorage(productsBasket);
+  product.quantityProduct += 1;
+  numberIndex = productsBasket.findIndex(prod => prod.id === product.id);
+  productsBasket[numberIndex].quantityProduct = product.quantityProduct;
+  productsBasket[numberIndex].totalPriceProduct = product.quantityProduct * product.price;
+  saveOnLocalStorage(productsBasket, quantity);
 }
 
-export function decrementCounter(product, productsBasket, reducerCart) {
-    
-    let numberIndex = productsBasket.findIndex(prod => prod.id === product.id);
+export function decrementCounter(product, productsBasket, quantity) {
 
-    if ((reducerCart.quantity > 0 && numberIndex >= 0) || product.quantityProduct > 0 ) {
-        product.quantityProduct -= 1;
-        productsBasket[numberIndex].quantityProduct = product.quantityProduct;
-        productsBasket[numberIndex].totalPriceProduct = product.quantityProduct * product.price;
-        reducerCart.quantity--;
-    }
+  let numberIndex = productsBasket.findIndex(prod => prod.id === product.id);
 
-    if (product.quantityProduct === 0) {
-        var filtered = productsBasket.filter((productBasket) => { return productBasket.name !== product.name });
-        productsBasket = filtered;
-    }
-    if(reducerCart.quantity === 0)
-    {
-        productsBasket = [];
-    }
-    saveOnLocalStorage(productsBasket);
-    return productsBasket;
+  if ((quantity > 0 && numberIndex >= 0) || product.quantityProduct > 0) {
+    product.quantityProduct -= 1;
+    productsBasket[numberIndex].quantityProduct = product.quantityProduct;
+    productsBasket[numberIndex].totalPriceProduct = product.quantityProduct * product.price;
+    quantity--;
+  }
+
+  if (product.quantityProduct === 0) {
+    var filtered = productsBasket.filter((productBasket) => { return productBasket.name !== product.name });
+    productsBasket = filtered;
+  }
+
+  if (quantity === 0) {
+    productsBasket = [];
+  }
+
+  saveOnLocalStorage(productsBasket);
+  return { productsBasket: productsBasket, quantity: quantity, product };
 }

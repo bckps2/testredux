@@ -3,22 +3,20 @@ import React from 'react';
 const products = (props) => {
     return (   
         <div>
-            /****************** PRODUCTOS*/
+            <h1>Productos</h1>
             {
-                props.products.map((product) =>
-                    <span>
+                props.products.map((product, index) =>
+                    <span key={index}>
                         <p>{product.name}</p>
                         <p>{product.price + "€"}</p>
                         <p>{product.quantityProduct}</p>
                         <button onClick={() => {
                             props.increment(product);
-                        }}>+</button>hool
+                        }}>+</button>
                         <button onClick={() => props.decrement(product)}>-</button>
                     </span>
                 )
             }
-            <p>/****************** FIN PRODUCTOS*/</p>
-Hola buenasji
         </div>
     )
 }

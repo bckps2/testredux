@@ -3,36 +3,31 @@ import { useDispatch } from 'react-redux';
 import ProductView from './products';
 import { connect } from 'react-redux';
 import { selectBasket } from '../store/redux1/reducerTest';
-import {incrementCounter, decrementCounter, getTotal} from './logicProducts';
 
-let products = [{ id: 0, name: 'Uva', price: 5.25, quantityProduct: 0, totalPriceProduct:0 }, { id: 1, name: 'Manzana', price: 5.25, quantityProduct: 0, totalPriceProduct:0 }];
-let productsBasket = [];
-let totalBasket = 0;
+let products = [{ id: 0, name: 'Uva', price: 5.25, quantityProduct: 0, totalPriceProduct: 0 }, { id: 1, name: 'Manzana', price: 5.25, quantityProduct: 0, totalPriceProduct: 0 }];
 
 const Products = ({ reducerCart }) => {
 
     const dispatch = useDispatch();
-    productsBasket = reducerCart.products != undefined ? reducerCart.products : [];
-    
-    if(reducerCart.products != undefined)
-    {
-        for (let prod in reducerCart.products)
-        {
+    let product = reducerCart.product;
+
+    if (reducerCart.products !== undefined) {
+        for (let prod in reducerCart.products) {
             var productbasket = reducerCart.products[prod];
             products[productbasket.id].quantityProduct = productbasket.quantityProduct;
         }
     }
 
+    if (product.id !== undefined) {
+        products[product.id].quantity = product.quantity;
+    }
+
     const increment = (product) => {
-        incrementCounter(product, productsBasket, reducerCart);
-        totalBasket = getTotal(productsBasket);
-        dispatch({ type: 'UPDATE_BASKET', payload: { quantity: reducerCart.quantity, product: productsBasket , totalBasket: totalBasket} });
+        dispatch({ type: 'ADD_ITEM', payload: { product: product } });
     }
 
     const decrement = (product) => {
-        productsBasket = decrementCounter(product, productsBasket, reducerCart, totalBasket);
-        totalBasket = getTotal(productsBasket);
-        dispatch({ type: 'UPDATE_BASKET', payload: { quantity: reducerCart.quantity, product: productsBasket, totalBasket: totalBasket} });
+        dispatch({ type: 'REMOVE_ITEM', payload: { product: product } });
     }
 
     return <ProductView products={products} increment={increment} decrement={decrement} />

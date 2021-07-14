@@ -25,7 +25,6 @@ function App() {
       <Products/>
      
       <span>
-        /**** AQUI LA PRUEBA DE COMO CAMBIA SOLO CON LLAMAR AL COMPONENTE******/
         <Summary/>
       </span>
     </div>
